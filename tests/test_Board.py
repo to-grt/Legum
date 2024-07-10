@@ -11,8 +11,8 @@ class TestBoard(unittest.TestCase):
         expected_empty_board = [[0 for _ in range(8)] for _ in range(8)]
         self.assertEqual(self.board.board.tolist(), expected_empty_board, "Board should be initialized empty")
 
-    def test_load_to_default(self):
-        self.board.load_to_default()
+    def test_set_to_default(self):
+        self.board.set_to_default()
         expected_default_setup = [
             [10, 8, 9, 11, 12, 9, 8, 10],
             [7, 7, 7, 7, 7, 7, 7, 7],
