@@ -15,9 +15,10 @@ class King(Piece):
         self.name = "King"
         self.color = color
         self.position = position
+        self.is_alive = True
 
     def __repr__(self) -> str:
-        return f"<King {self.color} {self.position}>"
+        return f"<King {self.color} {self.position} {self.is_alive}>"
 
     def __str__(self) -> str:
         return f"King {self.color}"
@@ -32,7 +33,7 @@ class King(Piece):
         """
         return [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
-    def get_moves(self) -> list:
+    def get_moves_from_directions(self) -> list:
         """
         Get the destination squares of the king on the board. Color is not taken into account because
         the moves are the same independently of the color of the piece.
@@ -45,3 +46,15 @@ class King(Piece):
             if 0 <= move[0] < 8 and 0 <= move[1] < 8:
                 moves.append(move)
         return moves
+
+    def move(self, position: tuple) -> None:
+        """
+        Move the king to the given position.
+        """
+        super().move(position)
+
+    def dies(self) -> None:
+        """
+        Set the piece as dead.
+        """
+        super().dies()

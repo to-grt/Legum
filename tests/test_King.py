@@ -16,7 +16,7 @@ class TestKing(unittest.TestCase):
 
     def test_king_repr(self):
         king = King(0, (0, 0))
-        self.assertEqual(repr(king), "<King 0 (0, 0)>")
+        self.assertEqual(repr(king), "<King 0 (0, 0) True>")
 
     def test_king_call(self):
         king = King(0, (0, 0))
@@ -28,20 +28,32 @@ class TestKing(unittest.TestCase):
 
     def test_king_get_moves(self):
         king = King(0, (0, 0))
-        self.assertEqual(king.get_moves(), [(0, 1), (1, 0), (1, 1)])
+        self.assertEqual(king.get_moves_from_directions(), [(0, 1), (1, 0), (1, 1)])
 
     def test_king_get_moves_2(self):
         king = King(0, (7, 7))
-        self.assertEqual(king.get_moves(), [(6, 6), (6, 7), (7, 6)])
+        self.assertEqual(king.get_moves_from_directions(), [(6, 6), (6, 7), (7, 6)])
 
     def test_king_get_moves_3(self):
         king = King(0, (7, 0))
-        self.assertEqual(king.get_moves(), [(6, 0), (6, 1), (7, 1)])
+        self.assertEqual(king.get_moves_from_directions(), [(6, 0), (6, 1), (7, 1)])
 
     def test_king_get_moves_4(self):
         king = King(0, (0, 7))
-        self.assertEqual(king.get_moves(), [(0, 6), (1, 6), (1, 7)])
+        self.assertEqual(king.get_moves_from_directions(), [(0, 6), (1, 6), (1, 7)])
 
     def test_king_get_moves_5(self):
         king = King(0, (3, 3))
-        self.assertEqual(king.get_moves(), [(2, 2), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 3), (4, 4)])
+        self.assertEqual(king.get_moves_from_directions(), [(2, 2), (2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 3), (4, 4)])
+
+    def test_king_move(self):
+        king = King(0, (3, 3))
+        king.move((4, 4))
+        self.assertEqual(king.position, (4, 4))
+        self.assertEqual(king.is_alive, True)
+
+    def test_king_dies(self):
+        king = King(0, (3, 3))
+        king.dies()
+        self.assertEqual(king.is_alive, False)
+
