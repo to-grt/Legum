@@ -1,10 +1,11 @@
 # Legum/__init__.py
 
 # Imports
-from . import Board
+from Legum.Board import Board
+from Legum.Piece import Piece
 
 # Accessibility from package
-__all__ = ['Board']
+__all__ = ['Board', 'Piece']
 
 # Package version
 __version__ = '0.1.0'
