@@ -11,7 +11,7 @@ class Piece(ABC):
 
     def __init__(self) -> None:
         if type(self) == Piece:
-            raise Exception("<Piece> should not be instanciated, use the subclasses")
+            raise Exception("<Piece> should not be instantiated, use the subclasses")
         self.name = None
         self.color = None
         self.position = None
