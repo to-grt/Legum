@@ -22,10 +22,10 @@ class Board:
     BLACK_QUEEN = 11
     BLACK_KING = 12
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.board = np.zeros(shape=(8, 8), dtype=int)
 
-    def set_to_default(self):
+    def set_to_default(self) -> None:
         self.board = np.array([
             [Board.BLACK_ROOK, Board.BLACK_KNIGHT, Board.BLACK_BISHOP, Board.BLACK_QUEEN, Board.BLACK_KING, Board.BLACK_BISHOP, Board.BLACK_KNIGHT, Board.BLACK_ROOK],
             [Board.BLACK_PAWN, Board.BLACK_PAWN, Board.BLACK_PAWN, Board.BLACK_PAWN, Board.BLACK_PAWN, Board.BLACK_PAWN, Board.BLACK_PAWN, Board.BLACK_PAWN],
@@ -36,5 +36,8 @@ class Board:
             [Board.WHITE_PAWN, Board.WHITE_PAWN, Board.WHITE_PAWN, Board.WHITE_PAWN, Board.WHITE_PAWN, Board.WHITE_PAWN, Board.WHITE_PAWN, Board.WHITE_PAWN],
             [Board.WHITE_ROOK, Board.WHITE_KNIGHT, Board.WHITE_BISHOP, Board.WHITE_QUEEN, Board.WHITE_KING, Board.WHITE_BISHOP, Board.WHITE_KNIGHT, Board.WHITE_ROOK]
         ])
+
+    def set_to_empty(self) -> None:
+        self.board = np.zeros(shape=(8, 8), dtype=int)
 
 
