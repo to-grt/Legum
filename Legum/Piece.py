@@ -1,7 +1,7 @@
 # Piece.py
 
 # Imports
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Piece(ABC):
@@ -23,34 +23,26 @@ class Piece(ABC):
     def __str__(self) -> str:
         return f"Piece"
 
-    def get_vectors(self) -> list:
+    def move(self, position: tuple) -> None:
         """
-        Get the vectors of the possible moves of the piece on the board.
-        This will be as direction vectors, or as absolute vectors, depending on the piece.
+        Move the piece to the given position.
+        """
+        self.position = position
+
+    def get_moves_from_absolute_vectors(self) -> list:
+        """
+        Get the possible moves of a piece from the absolute vectors. i.e. the knights, the kings, the pawns.
+        Should be implemented in some subclass.
         """
         pass
 
-    def move(self, position: tuple) -> None:
-        self.position = position
+    def get_moves_from_direction_vectors(self) -> list:
+        """
+        Get the possible moves of a piece from the direction vectors. i.e. the rooks, the bishops, the queens.
+        Should be implemented in some subclass.
 
-    def get_moves_from_vectors(self, vectors: list) -> list:
         """
-        Get the destination squares of the piece on the board. Color is not taken into account because
-        the moves are the same independently of the color of the piece.
-        """
-        moves = []
-        for vector in vectors:
-            move = (self.position[0] + vector[0], self.position[1] + vector[1])
-            if 0 <= move[0] < 8 and 0 <= move[1] < 8:
-                moves.append(move)
-        return moves
-
-    def get_moves_from_directions(self, directions: list) -> list:
-        """
-        Get the destination squares of the piece on the board.
-        """
-        # TODO: do it :)
-        return []
+        raise Exception("get_moves_from_direction_vectors should be implemented in the subclass.")
 
     def dies(self) -> None:
         """
