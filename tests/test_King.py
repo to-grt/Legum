@@ -9,6 +9,7 @@ class TestKing(unittest.TestCase):
         self.assertEqual(king.name, "King")
         self.assertEqual(king.color, 0)
         self.assertEqual(king.position, (0, 0))
+        self.assertEqual(king.is_alive, True)
 
     def test_king_str(self):
         king = King(0, (0, 0))
@@ -20,7 +21,7 @@ class TestKing(unittest.TestCase):
 
     def test_king_call(self):
         king = King(0, (0, 0))
-        self.assertEqual(king(), [(0, 1), (1, 0), (1, 1)])
+        self.assertEqual(king(), king.get_moves_from_direction_vectors())
 
     def test_king_get_moves(self):
         king = King(0, (0, 0))
@@ -52,4 +53,3 @@ class TestKing(unittest.TestCase):
         king = King(0, (3, 3))
         king.dies()
         self.assertEqual(king.is_alive, False)
-

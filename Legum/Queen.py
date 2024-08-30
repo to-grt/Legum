@@ -22,39 +22,14 @@ class Queen(Piece):
     def __str__(self) -> str:
         return f"Knight {self.color}"
 
-    def __call__(self) -> str:
-        return self.__str__()
+    def __call__(self) -> list:
+        return self.get_moves_from_direction_vectors()
 
-    @staticmethod
-    def get_direction_vectors() -> list:
-        """
-        Get the vectors of the possible moves of the knight on the board.
-        """
-        return [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+    def get_moves_from_direction_vectors(self) -> list:
 
-    def get_moves_from_directions(self) -> list:
-        """
-        Get the destination squares of the knight on the board. Color is not taken into account because
-        the moves are the same independently of the color of the piece.
-        TODO: will be updated to take into account the whole board, and especially the other pieces.
-        """
-        vectors = self.get_direction_vectors()
-        moves = []
-        for vector in vectors:
+        vectors = np.arange(0, 8)
+        
 
-            pass
 
-        return moves
-
-    def move(self, position: tuple) -> None:
-        """
-        Move the knight to the given position.
-        """
-        super().move(position)
-
-    def dies(self) -> None:
-        """
-        Set the piece as dead.
-        """
-        super().dies()
+        pass
 

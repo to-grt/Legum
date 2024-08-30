@@ -1,6 +1,7 @@
 import unittest
 from Legum.Knight import Knight
 
+
 class TestKnight(unittest.TestCase):
 
     def test_knight_instantiated(self):
@@ -8,6 +9,7 @@ class TestKnight(unittest.TestCase):
         self.assertEqual(knight.name, "Knight")
         self.assertEqual(knight.color, 0)
         self.assertEqual(knight.position, (0, 0))
+        self.assertEqual(knight.is_alive, True)
 
     def test_knight_str(self):
         knight = Knight(0, (0, 0))
@@ -19,7 +21,7 @@ class TestKnight(unittest.TestCase):
 
     def test_knight_call(self):
         knight = Knight(0, (0, 0))
-        self.assertEqual(knight(), [(1, 2), (2, 1)])
+        self.assertEqual(knight(), knight.get_moves_from_absolute_vectors())
 
     def test_knight_get_moves(self):
         knight = Knight(0, (0, 0))

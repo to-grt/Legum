@@ -23,26 +23,25 @@ class Piece(ABC):
     def __str__(self) -> str:
         return f"Piece"
 
-    def move(self, position: tuple) -> None:
-        """
-        Move the piece to the given position.
-        """
-        self.position = position
-
     def get_moves_from_absolute_vectors(self) -> list:
         """
         Get the possible moves of a piece from the absolute vectors. i.e. the knights, the kings, the pawns.
         Should be implemented in some subclass.
         """
-        pass
+        raise NotImplementedError("get_moves_from_absolute_vectors should be implemented in the subclass.")
 
     def get_moves_from_direction_vectors(self) -> list:
         """
         Get the possible moves of a piece from the direction vectors. i.e. the rooks, the bishops, the queens.
         Should be implemented in some subclass.
-
         """
-        raise Exception("get_moves_from_direction_vectors should be implemented in the subclass.")
+        raise NotImplementedError("get_moves_from_direction_vectors should be implemented in the subclass.")
+
+    def move(self, position: tuple) -> None:
+        """
+        Move the piece to the given position.
+        """
+        self.position = position
 
     def dies(self) -> None:
         """
