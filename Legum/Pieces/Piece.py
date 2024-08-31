@@ -1,7 +1,7 @@
 # Piece.py
 
 # Imports
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Piece(ABC):
@@ -16,6 +16,7 @@ class Piece(ABC):
         self.color = None
         self.position = None
         self.is_alive = None
+        self.has_move = None
 
     def __repr__(self) -> str:
         return f"<Piece>"
