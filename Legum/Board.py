@@ -10,13 +10,13 @@ from Legum.Pieces.Bishop import Bishop
 from Legum.Pieces.Knight import Knight
 from Legum.Pieces.Pawn import Pawn
 
-from Legum.constants import TYPE_COLORS, WHITE_COLOR, BLACK_COLOR, EMPTY
+from Legum.constants import TYPE_COLORS, EMPTY, BOARD_SHAPE
 
 
 class Board:
 
     def __init__(self) -> None:
-        self.board = np.zeros(shape=(8, 8), dtype=int)
+        self.board = np.empty(shape=(8, 8))
 
     def set_to_default(self) -> None:
         self.board = np.array([
@@ -31,37 +31,31 @@ class Board:
         ])
 
     def set_to_empty(self) -> None:
-        self.board = np.empty(shape=(8, 8))
+        self.board = np.empty(shape=BOARD_SHAPE)
 
     def get_masked_board(self) -> np.ndarray:
         return np.where(self.board == 0, 0, 1)
 
     def get_masked_board_for_color(self, color: TYPE_COLORS) -> np.ndarray:
-        masked_board = np.copy(self.board)
-        mask = np.zeros_like(self.board, dtype=bool)
+        """
+        Returns a masked board with 1 for pieces of the given color and 0 for the rest.
+        """
+        mask = np.zeros(BOARD_SHAPE, dtype=TYPE_COLORS)
         for index, piece in np.ndenumerate(self.board):
             if isinstance(piece, Piece):
                 if piece.color == color:
-                    mask[index] = True
-        masked_board[mask] = color
-        return masked_board
+                    mask[index] = color
+        return mask
 
     def get_masked_board_with_colors(self) -> np.ndarray:
         """
         Returns a masked board with 1 for white pieces and 2 for black pieces.
         """
-        masked_board = np.copy(self.board)
-        mask_white = np.zeros_like(self.board, dtype=bool)
-        mask_black = np.zeros_like(self.board, dtype=bool)
+        mask = np.zeros(BOARD_SHAPE, dtype=int)
         for index, piece in np.ndenumerate(self.board):
             if isinstance(piece, Piece):
-                if piece.color == WHITE_COLOR:
-                    mask_white[index] = True
-                elif piece.color == BLACK_COLOR:
-                    mask_black[index] = True
-        masked_board[mask_white] = WHITE_COLOR
-        masked_board[mask_black] = BLACK_COLOR
-        return masked_board
+                mask[index] = piece.color
+        return mask
 
 
 
