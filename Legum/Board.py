@@ -10,13 +10,45 @@ from Legum.Pieces.Bishop import Bishop
 from Legum.Pieces.Knight import Knight
 from Legum.Pieces.Pawn import Pawn
 
-from Legum.constants import TYPE_COLORS, EMPTY, BOARD_SHAPE
+from Legum.constants import TYPE_COLORS, EMPTY, BOARD_SHAPE, PIECES_LETTER_REPR, WHITE_COLOR, BLACK_COLOR, WHITE, GREEN, RESET
 
 
 class Board:
 
     def __init__(self) -> None:
         self.board = np.empty(shape=(8, 8))
+
+    def __str__(self):
+        return str(self.get_board_representation())
+
+    def __repr__(self):
+        return str(self.board)
+
+    def get_board_representation(self) -> np.ndarray:
+        representation = np.full(BOARD_SHAPE, 'x')
+        for index, piece in np.ndenumerate(self.board):
+            if isinstance(piece, Piece):
+                representation[index] = PIECES_LETTER_REPR[piece.name]
+        return representation
+
+    def print_board_to_console(self) -> None:
+        representation = self.get_board_representation()
+        print(f"{'-' * 34}")
+        for index, cell in np.ndenumerate(representation):
+            if index[1] == 0:
+                print("|", end="")
+            if isinstance(cell, Piece):
+                piece_repr = PIECES_LETTER_REPR[cell.name]
+                if cell.color == WHITE_COLOR:
+                    print(f" {WHITE}{piece_repr}{RESET} ", end="|")
+                else:
+                    print(f" {GREEN}{piece_repr}{RESET} ", end="|")
+            else:
+                print(f" {cell} ", end="|")
+            if index[1] == 7:
+                print()
+                print(f"{'-' * 34}")
+        print(self.get_board_representation())
 
     def set_to_default(self) -> None:
         self.board = np.array([
