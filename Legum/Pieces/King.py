@@ -18,9 +18,6 @@ class King(Piece):
         self.is_alive = True
         self.has_move = False
 
-    def __repr__(self) -> str:
-        return f"<King {self.color} {self.position} {self.is_alive} {self.has_move}>"
-
     def __str__(self) -> str:
         return f"King {self.color}"
 
