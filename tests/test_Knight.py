@@ -1,5 +1,5 @@
 import unittest
-from Legum.Knight import Knight
+from Legum.Pieces.Knight import Knight
 
 
 class TestKnight(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestKnight(unittest.TestCase):
 
     def test_knight_repr(self):
         knight = Knight(0, (0, 0))
-        self.assertEqual(repr(knight), "<Knight 0 (0, 0) True>")
+        self.assertEqual(repr(knight), "<Knight 0 (0, 0) True False>")
 
     def test_knight_call(self):
         knight = Knight(0, (0, 0))

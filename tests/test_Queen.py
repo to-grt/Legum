@@ -1,5 +1,5 @@
 import unittest
-from Legum.Queen import Queen
+from Legum.Pieces.Queen import Queen
 
 
 class TestQueen(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestQueen(unittest.TestCase):
 
     def test_queen_repr(self):
         queen = Queen(0, (0, 0))
-        self.assertEqual(repr(queen), "<Queen 0 (0, 0) True>")
+        self.assertEqual(repr(queen), "<Queen 0 (0, 0) True False>")
 
     def test_queen_call(self):
         queen = Queen(0, (0, 0))

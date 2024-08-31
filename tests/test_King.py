@@ -1,5 +1,5 @@
 import unittest
-from Legum.King import King
+from Legum.Pieces.King import King
 
 
 class TestKing(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestKing(unittest.TestCase):
 
     def test_king_repr(self):
         king = King(0, (0, 0))
-        self.assertEqual(repr(king), "<King 0 (0, 0) True>")
+        self.assertEqual(repr(king), "<King 0 (0, 0) True False>")
 
     def test_king_call(self):
         king = King(0, (0, 0))

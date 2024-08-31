@@ -1,5 +1,5 @@
 import unittest
-from Legum.Piece import Piece
+from Legum.Pieces.Piece import Piece
 
 
 class TestPiece(unittest.TestCase):
