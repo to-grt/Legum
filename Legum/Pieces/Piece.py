@@ -19,7 +19,11 @@ class Piece(ABC):
         self.has_move = None
 
     def __repr__(self) -> str:
-        return f"<Piece>"
+        representation = "<"
+        for key, value in self.__dict__.items():
+            representation += f"{key}={value} "
+        representation += ">"
+        return representation
 
     def __str__(self) -> str:
         return f"Piece"
