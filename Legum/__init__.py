@@ -2,7 +2,7 @@
 
 # Imports
 from Legum.Board import Board
-from Legum.Piece import Piece
+from Legum.Pieces.Piece import Piece
 
 # Accessibility from package
 __all__ = ['Board', 'Piece']
