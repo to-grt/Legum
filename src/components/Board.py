@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.components.Piece import Piece
+from src.components import Piece
 
 
 class Board:
