@@ -23,16 +23,18 @@ class Piece:
 
     dict_conversion_letter = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
     dict_conversion_number = {1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1, 8: 0}
+    dict_short_names = {'Pawn': 'P', 'Rook': 'R', 'Knight': 'N', 'Bishop': 'B', 'Queen': 'Q', 'King': 'K'}
 
     def __init__(self,
                  name: str = "Piece",
                  color: str = "undefined",
                  position: Tuple = (-1, -1),
                  is_alive: bool = True) -> None:
-        self.name: str = name               # e.g., 'Pawn', 'Rook'
-        self.color: str = color             # 'white' or 'black'
-        self.position: Tuple = position     # e.g., (0, 0) for A8
-        self.is_alive: bool = is_alive      # True if the piece is still in play
+        self.name: str = name
+        self.short_name: str = self.dict_short_names.get(name, 'X')
+        self.color: str = color
+        self.position: Tuple = position
+        self.is_alive: bool = is_alive
 
     def change_name(self, new_name: str) -> None:
         self.name = new_name
