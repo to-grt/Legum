@@ -7,20 +7,20 @@ class Piece:
     """
     A class to represent a generic chess piece.
     Attributes:
-        name (str): The name of the piece.
+        name (str): The name of the piece (e.g., 'Pawn', 'Rook').
+        short_name (str): The abbreviated name of the piece (e.g., 'P', 'R').
         color (str): The color of the piece ('white' or 'black').
-        position (Tuple): The current position of the piece on the board (row, column).
+        position (Tuple): The current position of the piece on the board as (row, column).
         is_alive (bool): Status indicating if the piece is still in play.
+        move_counter (int): Counts the number of moves made by the piece.
     Methods:
-        change_name(new_name): Updates the piece's name.
-        change_color(new_color): Updates the piece's color.
-        move(new_position): Updates the piece's position.
-        vanish(): Sets the piece's status to not alive.
-        resurrect(): Sets the piece's status to alive.
-        check_position(position): Validates if the position is within the board limits.
-        __call__(): Returns the piece instance.
-        __str__(): Returns a string representation of the piece.
-        __repr__(): Returns a detailed string representation of the piece.
+        find_moves(board): Abstract method to find valid moves for the piece.
+        change_name(new_name): Sets a new name for the piece.
+        change_color(new_color): Sets a new color for the piece.
+        change_status(is_alive): Updates the alive status of the piece.
+        change_position(new_position, board): Updates the position of the piece on the board.
+        coord_tuples_to_str(position): Converts position tuple to standard chess notation.
+        print_moves_nicely(moves): Prints possible moves in a readable format.
     """
 
     dict_conversion_letter = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
@@ -56,7 +56,7 @@ class Piece:
     # --------------------------------------------------------------------------------------------------------------- #
     # ----------- Methods to be overridden by subclasses ------------------------------------------------------------ #
     # --------------------------------------------------------------------------------------------------------------- #
-    def find_moves(self, board) -> list:
+    def find_moves(self, board: Board) -> list:
         raise NotImplementedError("[ERROR]: This method should be implemented by subclasses.")
 
     # --------------------------------------------------------------------------------------------------------------- #
@@ -89,9 +89,20 @@ class Piece:
         return self
 
     def __str__(self) -> str:
-        letter = list(self.dict_conversion_letter.keys())[list(self.dict_conversion_letter.values()).index(self.position[1])]
-        number = list(self.dict_conversion_number.keys())[list(self.dict_conversion_number.values()).index(self.position[0])]
-        return f"A {self.color} {self.name} at {letter}{number}"
+        coords = self.coord_tuples_to_str(self.position)
+        return f"A {self.color} {self.name} at {coords}"
 
     def __repr__(self) -> str:
         return f"{self}: {self.name}, Color: {self.color}, Position: {self.position}, Alive: {self.is_alive}."
+
+    # --------------------------------------------------------------------------------------------------------------- #
+    # ----------- Helpers ------------------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------------------------------------- #
+    def coord_tuples_to_str(self, position: Tuple) -> str:
+        letter = list(self.dict_conversion_letter.keys())[list(self.dict_conversion_letter.values()).index(position[1])]
+        number = list(self.dict_conversion_number.keys())[list(self.dict_conversion_number.values()).index(position[0])]
+        return f"{letter}{number}"
+
+    def print_moves_nicely(self, moves: list) -> None:
+        move_strs = [self.coord_tuples_to_str(move) for move in moves]
+        print(f"{self} can moves from {self.position} to {", ".join(move_strs)}")
