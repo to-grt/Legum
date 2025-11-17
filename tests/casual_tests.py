@@ -9,8 +9,8 @@ def main():
     king = King(board=board, color='white', position=(4, 4), is_alive=True)
     print(king)
 
-    bad_king = King(board=board, color='black', position=(1, 7), is_alive=True)
-    print(bad_king)
+    king_moves = king.find_moves(board)
+    king.print_moves_nicely(king_moves)
 
 
 if __name__ == "__main__":
