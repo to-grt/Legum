@@ -1,5 +1,7 @@
 from typing import Tuple
 
+from src.components import Board
+
 
 class Piece:
     """
@@ -25,46 +27,71 @@ class Piece:
     dict_conversion_number = {1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1, 8: 0}
     dict_short_names = {'Pawn': 'P', 'Rook': 'R', 'Knight': 'N', 'Bishop': 'B', 'Queen': 'Q', 'King': 'K'}
 
-    def __init__(self,
-                 name: str = "Piece",
-                 color: str = "undefined",
-                 position: Tuple = (-1, -1),
-                 is_alive: bool = True) -> None:
-        self.name: str = name
-        self.short_name: str = self.dict_short_names.get(name, 'X')
-        self.color: str = color
-        self.position: Tuple = position
-        self.is_alive: bool = is_alive
+    const_undefined_str = "undefined"
+    const_undefined_position = (-1, -1)
+    const_undefined_bool = None
 
+    def __init__(self,
+                 board: Board,
+                 name: str,
+                 color: str,
+                 position: Tuple,
+                 is_alive: bool,) -> None:
+
+        self.name: str = self.const_undefined_str
+        self.change_name(name)
+        self.short_name: str = self.dict_short_names.get(name, 'X')
+
+        self.color: str = self.const_undefined_str
+        self.change_color(color)
+
+        self.position: Tuple = self.const_undefined_position
+        self.change_position(position, board)
+
+        self.is_alive: bool = self.const_undefined_bool
+        self.change_status(is_alive)
+
+        self.move_counter: int = 0
+
+    # --------------------------------------------------------------------------------------------------------------- #
+    # ----------- Methods to be overridden by subclasses ------------------------------------------------------------ #
+    # --------------------------------------------------------------------------------------------------------------- #
+    def find_moves(self, board) -> list:
+        raise NotImplementedError("[ERROR]: This method should be implemented by subclasses.")
+
+    # --------------------------------------------------------------------------------------------------------------- #
+    # ----------- Setter -------------------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------------------------------------- #
     def change_name(self, new_name: str) -> None:
+        if new_name not in self.dict_short_names.keys():
+            raise ValueError(f"Name '{new_name}' is not a valid piece name. Available names: {list(self.dict_short_names.keys())}.")
         self.name = new_name
 
     def change_color(self, new_color: str) -> None:
+        if new_color not in ['white', 'black']:
+            raise ValueError(f"Color '{new_color}' is not valid. Choose 'white' or 'black'.")
         self.color = new_color
 
-    def move(self, new_position) -> None:
-        if not self.check_position(new_position):
-            raise ValueError(f"Invalid position: {new_position}")
+    def change_status(self, is_alive: bool) -> None:
+        if not isinstance(is_alive, bool):
+            raise ValueError(f"Status '{is_alive}' must be a boolean value.")
+        self.is_alive = is_alive
+
+    def change_position(self, new_position: Tuple, board: Board) -> None:
+        if not board.check_position(new_position):
+            raise ValueError(f"Position {new_position} is out of board bounds.")
         self.position = new_position
 
-    def vanish(self) -> None:
-        self.is_alive = False
-
-    def resurrect(self) -> None:
-        self.is_alive = True
-
-    @staticmethod
-    def check_position(position: Tuple) -> bool:
-        row, col = position
-        return 0 <= row <= 7 and 0 <= col <= 7
-
+    # --------------------------------------------------------------------------------------------------------------- #
+    # ----------- Methods below are common for all pieces and do not require overriding ----------------------------- #
+    # --------------------------------------------------------------------------------------------------------------- #
     def __call__(self):
         return self
 
     def __str__(self) -> str:
         letter = list(self.dict_conversion_letter.keys())[list(self.dict_conversion_letter.values()).index(self.position[1])]
         number = list(self.dict_conversion_number.keys())[list(self.dict_conversion_number.values()).index(self.position[0])]
-        return f"[WARNING]: Non-specific piece string called at position {letter}{number}."
+        return f"A {self.color} {self.name} at {letter}{number}"
 
     def __repr__(self) -> str:
-        return f"[WARNING]: Non-specific piece representation called: {self.name}, Color: {self.color}, Position: {self.position}, Alive: {self.is_alive}."
+        return f"{self}: {self.name}, Color: {self.color}, Position: {self.position}, Alive: {self.is_alive}."
