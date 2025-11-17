@@ -65,4 +65,4 @@ class Piece:
         return f"[WARNING]: Non-specific piece string called at position {letter}{number}."
 
     def __repr__(self) -> str:
-        return f"[WARNING]: Non-specific piece representation called."
+        return f"[WARNING]: Non-specific piece representation called: {self.name}, Color: {self.color}, Position: {self.position}, Alive: {self.is_alive}."
