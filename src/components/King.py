@@ -6,6 +6,7 @@ class King(Piece):
     A class to represent a King chess piece, inheriting from the Piece class.
     Attributes:
         Inherits all attributes from Piece.
+        in_check (bool): Status indicating if the King is currently in check.
     Methods:
         find_moves(board): Returns a list of valid moves for the King piece.
     """
