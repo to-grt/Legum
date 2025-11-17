@@ -16,6 +16,10 @@ class Board:
             raise NotImplementedError("Resetting board is only implemented for standard 8x8 chess board.")
         # TODO: Implement standard chess starting position
 
+    def check_position(self, position: tuple) -> bool:
+        row, col = position
+        return 0 <= row < self.board_size and 0 <= col < self.board_size
+
     def __str__(self) -> str:
          for row in self.board:
             row_str = ' | '
