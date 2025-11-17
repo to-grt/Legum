@@ -4,6 +4,18 @@ from src.components import Piece
 
 
 class Board:
+    """
+    A class to represent a chess board.
+    Attributes:
+        board_size (int): The size of the chess board (default is 8 for an 8x8 board).
+        board (np.ndarray): A 2D numpy array representing the chess board.
+    Methods:
+        empty_board(): Empties the board by setting all positions to 0.
+        reset_board(): Resets the board to the standard chess starting position.
+        check_position(position): Checks if a given position is within the bounds of the board.
+        __str__(): Returns a string representation of the board.
+        __repr__(): Returns a formal string representation of the Board object.
+    """
     def __init__(self, board_size: int = 8) -> None:
         self.board_size: int = board_size
         self.board = np.zeros((board_size, board_size), dtype=object)
