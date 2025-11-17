@@ -1,4 +1,4 @@
-from src.components.Piece import Piece
+from src.components import Piece, Board
 
 
 class King(Piece):
@@ -11,12 +11,12 @@ class King(Piece):
     """
 
     def __init__(self,
+                 board: Board,
                  color: str,
-                 position: tuple = (-1, -1),
-                 is_alive: bool = True) -> None:
-        if color not in ['white', 'black']:
-            raise ValueError("Color must be 'white' or 'black'.")
-        super().__init__(name="King", color=color, position=position, is_alive=is_alive)
+                 position: tuple,
+                 is_alive: bool) -> None:
+        super().__init__(board=board, name="King", color=color, position=position, is_alive=is_alive)
+        self.in_check: bool = False
 
     def find_moves(self, board) -> list:
         possible_moves = []
