@@ -57,13 +57,13 @@ class ChessGUI:
                                    self.square_size, self.square_size)
                 pygame.draw.rect(self.screen, color, rect)
 
-    def draw_pieces(self, board_state):
+    def draw_pieces(self, board):
         """
-        board_state: your 8x8 representation (e.g., 'wp' for white pawn, None for empty)
+        board_state: board representation (e.g., 'w_P' for white pawn, None for empty)
         """
         for row in range(self.board_size):
             for col in range(self.board_size):
-                piece = board_state[row][col]
+                piece = board[row][col]
                 if piece and piece in self.piece_images:
                     img = self.piece_images[piece]
                     x = col * self.square_size
@@ -82,10 +82,10 @@ class ChessGUI:
         overlay.fill((255, 255, 0))
         self.screen.blit(overlay, (col * self.square_size, row * self.square_size))
 
-    def run(self, board_state):
+    def run(self, board):
         """
         Main loop to run the chess GUI.
-        board_state: your 8x8 representation of the board
+        board: representation of the board
         """
         running = True
         clock = pygame.time.Clock()
@@ -105,7 +105,7 @@ class ChessGUI:
             self.draw_board()
             if self.selected_square:
                 self.highlight_square(*self.selected_square)
-            self.draw_pieces(board_state)
+            self.draw_pieces(board)
 
             pygame.display.flip()
             clock.tick(60)
