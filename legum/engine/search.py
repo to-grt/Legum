@@ -1,6 +1,7 @@
+import threading
 import time
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from legum.game import GameState, Move
 
@@ -26,20 +27,28 @@ class Searcher:
     """
     Negamax search with alpha-beta pruning, quiescence search on captures and iterative deepening.
     Methods:
-        search(state, depth, time_limit): Returns the best move found.
+        search(state, depth, time_limit, on_iteration): Returns the best move found.
+        stop(): Asks a running search (in another thread) to return as soon as possible.
     """
 
     def __init__(self) -> None:
         self.nodes = 0
         self.deadline: Optional[float] = None
+        self._stop = threading.Event()
 
-    def search(self, state: GameState, depth: int = 3, time_limit: Optional[float] = None) -> SearchResult:
+    def stop(self) -> None:
+        self._stop.set()
+
+    def search(self, state: GameState, depth: int = 3, time_limit: Optional[float] = None,
+               on_iteration: Optional[Callable[[SearchResult], None]] = None) -> SearchResult:
         """
-        Searches depth 1, 2, ... up to `depth`. With a `time_limit` (seconds), stops early and returns
-        the result of the last fully searched depth.
+        Searches depth 1, 2, ... up to `depth`. With a `time_limit` (seconds), or when stop() is called,
+        stops early and returns the result of the last fully searched depth.
+        `on_iteration` is called with the result of each completed depth.
         """
         self.nodes = 0
         self.deadline = time.monotonic() + time_limit if time_limit else None
+        self._stop.clear()
         best = SearchResult(None, 0, 0, 0)
         moves = self.order_moves(state, state.legal_moves())
         if not moves:
@@ -50,6 +59,8 @@ class Searcher:
             except SearchTimeout:
                 break
             best = SearchResult(move, score, current_depth, self.nodes)
+            if on_iteration is not None:
+                on_iteration(best)
             # Search the best move first at the next depth: it makes alpha-beta cut much more
             moves.remove(move)
             moves.insert(0, move)
@@ -72,10 +83,15 @@ class Searcher:
                 alpha, best_move = score, move
         return alpha, best_move
 
-    def negamax(self, state: GameState, depth: int, alpha: int, beta: int, ply: int) -> int:
+    def _count_node(self) -> None:
+        """Counts a node and, every 256 nodes, aborts the search if it was stopped or ran out of time."""
         self.nodes += 1
-        if self.deadline is not None and self.nodes % 256 == 0 and time.monotonic() > self.deadline:
+        if self.nodes % 256 == 0 and (self._stop.is_set() or
+                                      (self.deadline is not None and time.monotonic() > self.deadline)):
             raise SearchTimeout()
+
+    def negamax(self, state: GameState, depth: int, alpha: int, beta: int, ply: int) -> int:
+        self._count_node()
         if state.is_fifty_moves() or state.is_threefold_repetition() or state.is_insufficient_material():
             return 0
 
@@ -100,7 +116,7 @@ class Searcher:
 
     def quiescence(self, state: GameState, alpha: int, beta: int, ply: int) -> int:
         """Only looks at captures and promotions, so that the evaluation is not taken in the middle of a trade."""
-        self.nodes += 1
+        self._count_node()
         stand_pat = evaluate(state)
         if stand_pat >= beta:
             return beta

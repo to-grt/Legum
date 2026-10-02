@@ -13,6 +13,9 @@ dependencies = [
     "pygame",
 ]
 
+[project.scripts]
+legum-uci = "legum.uci:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest",

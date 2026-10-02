@@ -102,7 +102,8 @@ d'un générateur de coups ([Chess Programming Wiki — Perft Results](https://w
 - [x] Évaluation matérielle + tables pièce-case (piece-square tables).
 - [x] Recherche **minimax / négamax avec élagage alpha-bêta**, profondeur fixe, tri des coups (captures d'abord).
 - [x] Optionnel : recherche de quiescence, approfondissement itératif (avec limite de temps).
-- [ ] Optionnel : interface **UCI** pour faire jouer Legum dans Arena / cutechess-cli et mesurer son Elo contre d'autres moteurs.
+- [x] Optionnel : interface **UCI** pour faire jouer Legum dans Arena / cutechess-cli et mesurer son Elo contre d'autres moteurs.
+      *Fait : `legum-uci` / `python -m legum.uci` (module `legum/uci.py`), testé avec python-chess comme client.*
 
 **Critère de fin de la phase 2 :** tous les perft passent ; une partie complète humain vs IA se joue dans le GUI ;
 l'IA bat systématiquement un joueur aléatoire (test automatisé sur N parties).
