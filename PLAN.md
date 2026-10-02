@@ -1,5 +1,7 @@
 # Plan de développement — Legum
 
+> État : phases 1 et 2 réalisées (cases cochées). La phase 3 reste à mener.
+
 Trois phases successives :
 
 1. **Phase 1 — Correction** du code existant (le rendre importable, cohérent et testé).
@@ -14,11 +16,11 @@ sur le dépôt (commit `260efba`) sauf mention « (lecture du code) ».
 ## Phase 1 — Correction du code actuel
 
 ### 1.1 Environnement et dépendances
-- [ ] Ajouter `pyproject.toml` (ou `requirements.txt`) déclarant `numpy`, `pygame`, et `pytest` en dépendance de dev.
-- [ ] Déclarer la version de Python. Le code actuel **ne s'importe pas sous Python 3.11** :
+- [x] Ajouter `pyproject.toml` (ou `requirements.txt`) déclarant `numpy`, `pygame`, et `pytest` en dépendance de dev.
+- [x] Déclarer la version de Python. Le code actuel **ne s'importe pas sous Python 3.11** :
       `Piece.py:108` imbrique des guillemets doubles dans une f-string (syntaxe valide seulement depuis Python 3.12, PEP 701).
       Choix recommandé : corriger la ligne (`', '.join(...)`) pour rester compatible ≥ 3.10, plutôt que d'exiger 3.12.
-- [ ] Faire de `src` un package propre (`src/__init__.py`) ou passer à une arborescence `legum/` installable (`pip install -e .`),
+- [x] Faire de `src` un package propre (`src/__init__.py`) ou passer à une arborescence `legum/` installable (`pip install -e .`),
       pour que `tests/` puisse importer sans bricolage de `sys.path`. Déplacer `const_paths.py` dans le package.
 
 **Critère de fin :** `pip install -e .[dev]` puis `python -c "import legum"` fonctionnent sur 3.10+.
@@ -27,36 +29,37 @@ sur le dépôt (commit `260efba`) sauf mention « (lecture du code) ».
 Constat vérifié : à cause de l'ordre dans `src/components/__init__.py`, le nom `Board` dans `Piece.py`/`King.py`
 et le nom `Piece` dans `Board.py` sont liés au **module**, pas à la classe.
 Conséquence (lecture du code) : `isinstance(cell, Piece)` dans `Board.__str__` lèvera `TypeError` dès qu'une pièce est sur le plateau.
-- [ ] Importer les classes depuis leurs modules (`from .Board import Board`) et non depuis le package.
-- [ ] Casser le cycle `Board ↔ Piece` : `from __future__ import annotations` + `if TYPE_CHECKING:` pour les annotations,
+- [x] Importer les classes depuis leurs modules (`from .Board import Board`) et non depuis le package.
+- [x] Casser le cycle `Board ↔ Piece` : `from __future__ import annotations` + `if TYPE_CHECKING:` pour les annotations,
       ou supprimer la dépendance de `Piece` envers `Board` (voir 1.3).
 
 **Critère de fin :** un test vérifie que `Board.__str__` affiche un plateau contenant un Roi.
 
 ### 1.3 Cohérence du modèle
-- [ ] Le constructeur de `Piece` ne pose pas la pièce dans `board.board` : ajouter `Board.place(piece)` / `Board.remove(pos)`
+- [x] Le constructeur de `Piece` ne pose pas la pièce dans `board.board` : ajouter `Board.place(piece)` / `Board.remove(pos)`
       et faire du plateau la **source de vérité** (la position stockée dans la pièce doit rester synchronisée, ou être supprimée).
-- [ ] `Board.__str__` doit **retourner** la chaîne au lieu de faire `print` puis `return ""`.
-- [ ] Ajouter `Board.__getitem__((row, col))` pour un accès lisible.
-- [ ] Remplacer les chaînes `'white'`/`'black'` par un `Enum Color` (et idem pour le type de pièce) afin d'éviter les fautes de frappe.
-- [ ] `coord_tuples_to_str` : remplacer la recherche inverse dans les dictionnaires par un calcul direct
+- [x] `Board.__str__` doit **retourner** la chaîne au lieu de faire `print` puis `return ""`.
+- [x] Ajouter `Board.__getitem__((row, col))` pour un accès lisible.
+- [x] Remplacer les chaînes `'white'`/`'black'` par un `Enum Color` (et idem pour le type de pièce) afin d'éviter les fautes de frappe.
+      *Fait : `Color` est un Enum ; le type de pièce est porté par les sous-classes (`Pawn`, `Knight`…) et leur `short_name`.*
+- [x] `coord_tuples_to_str` : remplacer la recherche inverse dans les dictionnaires par un calcul direct
       (`"ABCDEFGH"[col] + str(8 - row)`), et le sortir de `Piece` (fonction utilitaire de module).
-- [ ] `King.find_moves(board)` : le paramètre `board` est redondant avec celui passé au constructeur — choisir une seule convention.
-- [ ] `Piece.__call__` retourne `self` sans utilité : à supprimer.
+- [x] `King.find_moves(board)` : le paramètre `board` est redondant avec celui passé au constructeur — choisir une seule convention.
+- [x] `Piece.__call__` retourne `self` sans utilité : à supprimer.
 
 ### 1.4 GUI (lecture du code)
-- [ ] `ChessGUI.__init__` n'appelle pas `load_pieces_resources()` → les images ne sont jamais chargées.
-- [ ] `draw_pieces` attend des chaînes `'w_P'` alors que `casual_tests.py` lui passe un objet `Board` :
+- [x] `ChessGUI.__init__` n'appelle pas `load_pieces_resources()` → les images ne sont jamais chargées.
+- [x] `draw_pieces` attend des chaînes `'w_P'` alors que `casual_tests.py` lui passe un objet `Board` :
       ajouter une méthode de conversion (ex. `Piece.sprite_key` → `f"{color[0]}_{short_name}"`).
-- [ ] `ressources/` → `resources/` (orthographe anglaise ; optionnel mais à faire tôt pour éviter des renommages plus tard).
+- [x] `ressources/` → `resources/` (orthographe anglaise ; optionnel mais à faire tôt pour éviter des renommages plus tard).
 
 ### 1.5 Tests
-- [ ] Remplacer `tests/casual_tests.py` par une vraie suite `pytest` (le GUI ne doit pas être lancé par les tests).
-- [ ] Tests unitaires : validation des setters de `Piece`, `check_position`, conversion de coordonnées, coups du Roi
+- [x] Remplacer `tests/casual_tests.py` par une vraie suite `pytest` (le GUI ne doit pas être lancé par les tests).
+- [x] Tests unitaires : validation des setters de `Piece`, `check_position`, conversion de coordonnées, coups du Roi
       (coin, bord, centre, case alliée/ennemie).
-- [ ] Ajouter une CI GitHub Actions (lint `ruff` + `pytest`).
+- [x] Ajouter une CI GitHub Actions (lint `ruff` + `pytest`).
 
-**Critère de fin de la phase 1 :** CI verte, `python -m legum.gui` ouvre une fenêtre affichant un Roi.
+**Critère de fin de la phase 1 :** CI verte, `python -m legum` ouvre une fenêtre affichant un Roi.
 
 ---
 
@@ -66,39 +69,39 @@ Définition de « minimal fonctionnel » : **deux humains, ou un humain contre l
 et légale dans le GUI, et la fin de partie est détectée.**
 
 ### 2.1 Représentation de la position
-- [ ] Classe `Position` / `GameState` : plateau, trait (couleur à jouer), droits de roque, case de prise en passant,
+- [x] Classe `Position` / `GameState` : plateau, trait (couleur à jouer), droits de roque, case de prise en passant,
       compteur des demi-coups (règle des 50 coups), numéro de coup, historique (pour la répétition).
-- [ ] Import/export **FEN** (format standard des positions) : indispensable pour les tests et pour la phase 3.
-- [ ] Classe `Move` (from, to, promotion, drapeaux : capture, roque, en passant) + notation UCI (`e2e4`, `e7e8q`).
+- [x] Import/export **FEN** (format standard des positions) : indispensable pour les tests et pour la phase 3.
+- [x] Classe `Move` (from, to, promotion, drapeaux : capture, roque, en passant) + notation UCI (`e2e4`, `e7e8q`).
 
 ### 2.2 Génération des coups pseudo-légaux
-- [ ] Pièces glissantes (Tour, Fou, Dame) : factoriser avec une liste de directions + `sliding=True`.
-- [ ] Cavalier, Roi (déjà fait, à adapter), Pion : avance simple/double, prises, **prise en passant**, **promotion**.
-- [ ] **Roque** : droits, cases vides, le Roi ne doit pas partir de, traverser ou arriver sur une case attaquée.
+- [x] Pièces glissantes (Tour, Fou, Dame) : factoriser avec une liste de directions + `sliding=True`.
+- [x] Cavalier, Roi (déjà fait, à adapter), Pion : avance simple/double, prises, **prise en passant**, **promotion**.
+- [x] **Roque** : droits, cases vides, le Roi ne doit pas partir de, traverser ou arriver sur une case attaquée.
 
 ### 2.3 Légalité et fin de partie
-- [ ] `is_square_attacked(square, by_color)`.
-- [ ] Filtrer les coups qui laissent son propre Roi en échec (approche simple : jouer / tester / annuler avec `make_move`/`unmake_move`).
-- [ ] Détection : échec et mat, pat, règle des 50 coups, triple répétition, matériel insuffisant.
-- [ ] `Board.reset_board()` : position initiale (via la FEN de départ).
+- [x] `is_square_attacked(square, by_color)`.
+- [x] Filtrer les coups qui laissent son propre Roi en échec (approche simple : jouer / tester / annuler avec `make_move`/`unmake_move`).
+- [x] Détection : échec et mat, pat, règle des 50 coups, triple répétition, matériel insuffisant.
+- [x] `Board.reset_board()` : position initiale (via la FEN de départ).
 
 ### 2.4 Validation par **perft**
 Le perft compte les feuilles de l'arbre des coups légaux à une profondeur donnée ; c'est le test de référence
 d'un générateur de coups ([Chess Programming Wiki — Perft Results](https://www.chessprogramming.org/Perft_Results)).
-- [ ] Position initiale : 20 / 400 / 8 902 / 197 281 (profondeurs 1 à 4).
-- [ ] Position « Kiwipete » (roques, en passant, promotions) : 48 / 2 039 / 97 862 (profondeurs 1 à 3).
-- [ ] Optionnel : comparaison automatique avec [`python-chess`](https://github.com/niklasf/python-chess) sur des positions aléatoires
+- [x] Position initiale : 20 / 400 / 8 902 / 197 281 (profondeurs 1 à 4).
+- [x] Position « Kiwipete » (roques, en passant, promotions) : 48 / 2 039 / 97 862 (profondeurs 1 à 3).
+- [x] Optionnel : comparaison automatique avec [`python-chess`](https://github.com/niklasf/python-chess) sur des positions aléatoires
       (en dépendance de test uniquement, pour ne pas dénaturer le projet « from scratch »).
 
 ### 2.5 GUI jouable
-- [ ] Clic 1 = sélection d'une pièce du camp au trait + surbrillance de ses coups légaux ; clic 2 = jouer le coup.
-- [ ] Choix de la pièce de promotion, affichage du résultat, bouton « nouvelle partie », annulation (undo).
-- [ ] Séparer clairement **modèle** (règles) et **vue** (pygame) : le GUI ne doit appeler que l'API publique de `GameState`.
+- [x] Clic 1 = sélection d'une pièce du camp au trait + surbrillance de ses coups légaux ; clic 2 = jouer le coup.
+- [x] Choix de la pièce de promotion, affichage du résultat, bouton « nouvelle partie », annulation (undo).
+- [x] Séparer clairement **modèle** (règles) et **vue** (pygame) : le GUI ne doit appeler que l'API publique de `GameState`.
 
 ### 2.6 IA de base (référence pour la phase 3)
-- [ ] Évaluation matérielle + tables pièce-case (piece-square tables).
-- [ ] Recherche **minimax / négamax avec élagage alpha-bêta**, profondeur fixe, tri des coups (captures d'abord).
-- [ ] Optionnel : recherche de quiescence, approfondissement itératif.
+- [x] Évaluation matérielle + tables pièce-case (piece-square tables).
+- [x] Recherche **minimax / négamax avec élagage alpha-bêta**, profondeur fixe, tri des coups (captures d'abord).
+- [x] Optionnel : recherche de quiescence, approfondissement itératif (avec limite de temps).
 - [ ] Optionnel : interface **UCI** pour faire jouer Legum dans Arena / cutechess-cli et mesurer son Elo contre d'autres moteurs.
 
 **Critère de fin de la phase 2 :** tous les perft passent ; une partie complète humain vs IA se joue dans le GUI ;

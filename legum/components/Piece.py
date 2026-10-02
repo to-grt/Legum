@@ -18,24 +18,49 @@ class Piece:
         short_name (str): The abbreviated name of the piece (e.g., 'P', 'R'), defined by each subclass.
         color (Color): The color of the piece.
         position (Tuple | None): The current position of the piece as (row, column), None when off the board.
+        directions (List[Tuple]): (d_row, d_col) steps the piece moves along, defined by each subclass.
+        sliding (bool): True if the piece repeats its steps until blocked (Rook, Bishop, Queen).
+        value (int): Material value in centipawns, used by the engine.
     Methods:
-        find_moves(board): Abstract method to find the target squares of the piece.
+        find_moves(board): Returns the squares the piece can reach (empty or occupied by an opponent),
+                           without checking whether its own king is left in check.
         sprite_key: Name of the image used by the GUI (e.g., 'w_K').
         print_moves_nicely(moves): Prints possible moves in a readable format.
     """
 
     name = "Piece"
     short_name = "X"
+    directions: List[Tuple[int, int]] = []
+    sliding = False
+    value = 0
 
     def __init__(self, color: Color | str) -> None:
         self.color: Color = Color(color)
         self.position: Optional[Tuple[int, int]] = None
 
     # --------------------------------------------------------------------------------------------------------------- #
-    # ----------- Methods to be overridden by subclasses ------------------------------------------------------------ #
+    # ----------- Can be overridden by subclasses (the Pawn does) --------------------------------------------------- #
     # --------------------------------------------------------------------------------------------------------------- #
     def find_moves(self, board: Board) -> List[Tuple[int, int]]:
-        raise NotImplementedError("[ERROR]: This method should be implemented by subclasses.")
+        if self.position is None:
+            raise ValueError(f"{self!r} is not on the board.")
+        possible_moves = []
+        row, col = self.position
+        for d_row, d_col in self.directions:
+            target = (row + d_row, col + d_col)
+            while board.check_position(target):
+                target_cell = board[target]
+                if target_cell is None:
+                    possible_moves.append(target)
+                elif target_cell.color != self.color:
+                    possible_moves.append(target)
+                    break
+                else:
+                    break
+                if not self.sliding:
+                    break
+                target = (target[0] + d_row, target[1] + d_col)
+        return possible_moves
 
     # --------------------------------------------------------------------------------------------------------------- #
     # ----------- Methods below are common for all pieces and do not require overriding ----------------------------- #
