@@ -1,4 +1,68 @@
 # Legum
 A from-scratch chess engine :)
 
-New refactoring branch for better and robust code.
+## Installation
+Python 3.10 or newer.
+```bash
+pip install -e .          # numpy, pygame
+pip install -e .[dev]     # + pytest, ruff, python-chess (used by the tests only)
+```
+
+## Play
+```bash
+python -m legum                    # you play white against the engine
+python -m legum --ai white         # you play black
+python -m legum --ai none          # two human players
+python -m legum --depth 2          # weaker but faster engine (default depth: 3, max 10 s per move)
+python -m legum --fen "<FEN>"      # start from any position
+```
+Click a piece, then one of the highlighted squares. `U` takes back a move, `N` starts a new game, `Esc` quits.
+
+## UCI engine
+Legum speaks the [UCI protocol](https://en.wikipedia.org/wiki/Universal_Chess_Interface), so any UCI GUI or tool
+(Arena, cutechess-cli, python-chess, a Lichess bot...) can use it. Point the tool to the `legum-uci` command
+(installed by `pip install -e .`), or to `python -m legum.uci`.
+```text
+$ legum-uci
+uci
+id name Legum
+id author Legum contributors
+uciok
+position startpos moves e2e4 e7e5
+go depth 3
+info depth 1 score cp ... nodes ... time ... pv ...
+...
+bestmove ...
+```
+Supported commands: `uci`, `isready`, `ucinewgame`, `position [startpos | fen <fen>] [moves ...]`,
+`go [depth | movetime | wtime btime winc binc movestogo | infinite]`, `stop`, `quit`.
+With a clock (`wtime`/`btime`), each move gets an equal share of the remaining time plus most of the increment.
+
+## Code layout
+| Package | Content |
+|---|---|
+| `legum/components` | `Board` (piece placement, source of truth), `Piece` and its subclasses, `Color`, coordinates |
+| `legum/game` | `GameState` (FEN, legal moves, make/unmake, end of game), `Move` (UCI notation), `perft` |
+| `legum/engine` | Evaluation (material + piece-square tables) and negamax alpha-beta search with quiescence |
+| `legum/gui` | Pygame interface |
+| `legum/uci.py` | UCI protocol front-end |
+
+Coordinates are `(row, col)` tuples, row 0 being rank 8 and column 0 file A.
+
+## Tests
+```bash
+pytest              # fast tests (a few seconds)
+pytest -m slow      # deep perft, 100 random games checked against python-chess, engine vs random player
+ruff check .
+```
+The move generator is validated with [perft](https://www.chessprogramming.org/Perft_Results) on five reference
+positions and by comparing legal moves, FEN, check and insufficient material with
+[python-chess](https://github.com/niklasf/python-chess) along random games.
+
+## Known simplifications
+- The fifty-move rule and threefold repetition end the game automatically (under FIDE rules they must be claimed).
+- For repetitions, an en passant square counts as soon as a pawn stands next to it, even if the capture is illegal
+  because of a pin.
+- The engine is written in pure Python: around 30 000 perft nodes per second on the development machine, depth 3 takes a few seconds.
+
+See [PLAN.md](PLAN.md) for the roadmap.

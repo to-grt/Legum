@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "legum"
+version = "0.1.0"
+description = "A from-scratch chess engine"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pygame",
+]
+
+[project.scripts]
+legum-uci = "legum.uci:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "chess",  # python-chess, only used by the tests as an independent reference for the rules
+]
+
+[tool.setuptools.packages.find]
+include = ["legum*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "legum"]
+addopts = "--doctest-modules -m 'not slow'"
+markers = ["slow: long-running tests, run them with `pytest -m slow`"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "W", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
